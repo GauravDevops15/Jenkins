@@ -1,97 +1,132 @@
-# Jenkins Zero to Hero 🎓🚀
+# Jenkins-Zero-To-Hero
 
-Welcome to the official repository for the **Jenkins Zero to Hero** tutorial series! This repository contains all the examples, configuration files, and code used throughout the playlist to help you learn Jenkins from beginner to advanced level.
+Are you looking forward to learn Jenkins right from Zero(installation) to Hero(Build end to end pipelines)? then you are at the right place. 
 
----
+## Installation on EC2 Instance
 
-## 📂 Repository Structure
+YouTube Video ->
+https://www.youtube.com/watch?v=zZfhAXfBvVA&list=RDCMUCnnQ3ybuyFdzvgv2Ky5jnAA&index=1
 
-```bash
-.
-├── 01-installation/           # Jenkins installation & setup
-├── 02-basic-pipeline/         # Basic pipeline with Jenkinsfile
-├── 03-docker-integration/     # Using Jenkins with Docker
-├── 04-advanced-pipeline/      # Parallel stages, shared libs, etc.
-├── 05-deployment/             # CI/CD pipeline with deployment steps
-├── 06-jenkins-on-kubernetes/  # Running Jenkins in Kubernetes
-├── shared-libraries/          # Reusable Jenkins pipeline code
-├── scripts/                   # Bash, Groovy scripts used in pipelines
-├── jenkins.yaml               # Jenkins Configuration as Code (JCasC)
-└── README.md
 
-✅ What You'll Learn
-✅ How to install Jenkins (locally, Docker, or cloud)
+![Screenshot 2023-02-01 at 5 46 14 PM](https://user-images.githubusercontent.com/43399466/216040281-6c8b89c3-8c22-4620-ad1c-8edd78eb31ae.png)
 
-✅ Creating freestyle jobs and pipeline jobs
+Install Jenkins, configure Docker as agent, set up cicd, deploy applications to k8s and much more.
 
-✅ Writing and using Jenkinsfile (Declarative and Scripted)
+## AWS EC2 Instance
 
-✅ Using Docker with Jenkins
+- Go to AWS Console
+- Instances(running)
+- Launch instances
 
-✅ Integrating Jenkins with GitHub, Maven, Gradle, and more
+<img width="994" alt="Screenshot 2023-02-01 at 12 37 45 PM" src="https://user-images.githubusercontent.com/43399466/215974891-196abfe9-ace0-407b-abd2-adcffe218e3f.png">
 
-✅ CI/CD best practices
+### Install Jenkins.
 
-✅ Jenkins on Kubernetes
+Pre-Requisites:
+ - Java (JDK)
 
-✅ Jenkins Configuration as Code (JCasC)
+### Run the below commands to install Java and Jenkins
 
-✅ Creating and using Shared Libraries
+Install Java
 
-✅ Pipeline triggers, webhooks, and credentials
+```
+sudo apt update
+sudo apt install openjdk-17-jre
+```
 
-🧰 Requirements
-Git
+Verify Java is Installed
 
-Docker (for container-based setup)
+```
+java -version
+```
 
-Java 8 or later
+Now, you can proceed with installing Jenkins
 
-Optional: Kubernetes (for advanced sections)
+```
+curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+```
 
-🚀 Getting Started
-Clone the repo
-bash
-Copy
-Edit
-git clone https://github.com/your-username/jenkins-zero-to-hero.git
-cd jenkins-zero-to-hero
-Run Jenkins using Docker (Basic Setup)
-bash
-Copy
-Edit
-docker run -d -p 8080:8080 -p 50000:50000 \
-  -v jenkins_home:/var/jenkins_home \
-  jenkins/jenkins:lts
-Access Jenkins at http://localhost:8080
+**Note: ** By default, Jenkins will not be accessible to the external world due to the inbound traffic restriction by AWS. Open port 8080 in the inbound traffic rules as show below.
 
-📘 Docs & Resources
-Official Jenkins Documentation
+- EC2 > Instances > Click on <Instance-ID>
+- In the bottom tabs -> Click on Security
+- Security groups
+- Add inbound traffic rules as shown in the image (you can just allow TCP 8080 as well, in my case, I allowed `All traffic`).
 
-Pipeline Syntax Guide
+<img width="1187" alt="Screenshot 2023-02-01 at 12 42 01 PM" src="https://user-images.githubusercontent.com/43399466/215975712-2fc569cb-9d76-49b4-9345-d8b62187aa22.png">
 
-Jenkins GitHub Plugin
 
-Jenkins Shared Libraries
+### Login to Jenkins using the below URL:
 
-🙌 Contributing
-Contributions, pull requests, and suggestions are welcome!
+http://<ec2-instance-public-ip-address>:8080    [You can get the ec2-instance-public-ip-address from your AWS EC2 console page]
 
-If you find an issue or want to enhance a specific part of the tutorial examples, feel free to open a PR or submit an issue.
+Note: If you are not interested in allowing `All Traffic` to your EC2 instance
+      1. Delete the inbound traffic rule for your instance
+      2. Edit the inbound traffic rule to only allow custom TCP port `8080`
+  
+After you login to Jenkins, 
+      - Run the command to copy the Jenkins Admin Password - `sudo cat /var/lib/jenkins/secrets/initialAdminPassword`
+      - Enter the Administrator password
+      
+<img width="1291" alt="Screenshot 2023-02-01 at 10 56 25 AM" src="https://user-images.githubusercontent.com/43399466/215959008-3ebca431-1f14-4d81-9f12-6bb232bfbee3.png">
 
-📄 License
-This repository is licensed under the MIT License.
+### Click on Install suggested plugins
 
-⭐️ Support the Project
-If you found the playlist and this repo helpful:
+<img width="1291" alt="Screenshot 2023-02-01 at 10 58 40 AM" src="https://user-images.githubusercontent.com/43399466/215959294-047eadef-7e64-4795-bd3b-b1efb0375988.png">
 
-⭐️ Star this repo
+Wait for the Jenkins to Install suggested plugins
 
-Happy Jenkins-ing! 🛠️💙
+<img width="1291" alt="Screenshot 2023-02-01 at 10 59 31 AM" src="https://user-images.githubusercontent.com/43399466/215959398-344b5721-28ec-47a5-8908-b698e435608d.png">
 
-yaml
-Copy
-Edit
+Create First Admin User or Skip the step [If you want to use this Jenkins instance for future use-cases as well, better to create admin user]
 
----
+<img width="990" alt="Screenshot 2023-02-01 at 11 02 09 AM" src="https://user-images.githubusercontent.com/43399466/215959757-403246c8-e739-4103-9265-6bdab418013e.png">
 
+Jenkins Installation is Successful. You can now starting using the Jenkins 
+
+<img width="990" alt="Screenshot 2023-02-01 at 11 14 13 AM" src="https://user-images.githubusercontent.com/43399466/215961440-3f13f82b-61a2-4117-88bc-0da265a67fa7.png">
+
+## Install the Docker Pipeline plugin in Jenkins:
+
+   - Log in to Jenkins.
+   - Go to Manage Jenkins > Manage Plugins.
+   - In the Available tab, search for "Docker Pipeline".
+   - Select the plugin and click the Install button.
+   - Restart Jenkins after the plugin is installed.
+   
+<img width="1392" alt="Screenshot 2023-02-01 at 12 17 02 PM" src="https://user-images.githubusercontent.com/43399466/215973898-7c366525-15db-4876-bd71-49522ecb267d.png">
+
+Wait for the Jenkins to be restarted.
+
+
+## Docker Slave Configuration
+
+Run the below command to Install Docker
+
+```
+sudo apt update
+sudo apt install docker.io
+```
+ 
+### Grant Jenkins user and Ubuntu user permission to docker deamon.
+
+```
+sudo su - 
+usermod -aG docker jenkins
+usermod -aG docker ubuntu
+systemctl restart docker
+```
+
+Once you are done with the above steps, it is better to restart Jenkins.
+
+```
+http://<ec2-instance-public-ip>:8080/restart
+```
+
+The docker agent configuration is now successful.
